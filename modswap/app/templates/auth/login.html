@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-lg mx-auto">
+  <div class="bg-white border rounded p-6">
+    <h2 class="text-2xl font-semibold">Login with your university email</h2>
+    <p class="mt-2 text-gray-700">We support `.ac.uk` emails. We’ll send you a magic link to sign in—no password needed.</p>
+    <form method="post" class="mt-4 space-y-4">
+      <label class="block">
+        <span class="text-sm text-gray-600">Email</span>
+        <input type="email" name="email" required placeholder="name@youruni.ac.uk" class="mt-1 w-full border rounded px-3 py-2">
+      </label>
+      <button class="px-5 py-2.5 bg-blue-600 text-white rounded w-full">Send magic link</button>
+    </form>
+    <div class="mt-4 text-xs text-gray-600">By continuing you agree to our acceptable use. We never share your data.</div>
+  </div>
+</div>
+{% endblock %}

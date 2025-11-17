@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl">
+  <h2 class="text-2xl font-semibold mb-2">Create swap request</h2>
+  <p class="text-gray-700 mb-6">Select modules you are willing to give away and those you want. You can choose multiple on each side.</p>
+  <form method="post" class="grid md:grid-cols-2 gap-6">
+    <div class="bg-white border rounded p-4">
+      <div class="font-medium">Giving away</div>
+      <div class="text-sm text-gray-600 mb-3">Select modules you currently take and want to swap.</div>
+      <div class="space-y-2 max-h-80 overflow-auto">
+        {% for m in modules %}
+        <label class="flex items-center gap-2">
+          <input type="checkbox" name="give" value="{{ m.id }}">
+          <span class="text-gray-800"><span class="font-medium">{{ m.code }}</span> — {{ m.name }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="bg-white border rounded p-4">
+      <div class="font-medium">Want</div>
+      <div class="text-sm text-gray-600 mb-3">Select modules you desire to take.</div>
+      <div class="space-y-2 max-h-80 overflow-auto">
+        {% for m in modules %}
+        <label class="flex items-center gap-2">
+          <input type="checkbox" name="want" value="{{ m.id }}">
+          <span class="text-gray-800"><span class="font-medium">{{ m.code }}</span> — {{ m.name }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="md:col-span-2 flex justify-end">
+      <button class="px-5 py-2.5 bg-blue-600 text-white rounded">Create request</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

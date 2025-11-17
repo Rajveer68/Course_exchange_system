@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="grid md:grid-cols-2 gap-8 items-center">
+  <div>
+    <h1 class="text-5xl font-bold tracking-tight">Swap modules, study happier</h1>
+    <p class="mt-4 text-gray-700">Find peers who want the modules you have, and want your modules in return. Built for UK universities and compliant with department rules.</p>
+    <div class="mt-6 flex gap-3">
+      <a href="/auth/login" class="px-5 py-3 bg-blue-600 text-white rounded">Get started</a>
+      <a href="/swaps" class="px-5 py-3 border rounded">Browse swaps</a>
+    </div>
+    <div class="mt-6 flex items-center gap-4">
+      <div class="bg-white rounded border px-4 py-2">
+        <div class="text-xs uppercase text-gray-500">Users</div>
+        <div class="text-2xl font-semibold">200</div>
+      </div>
+      <div class="bg-white rounded border px-4 py-2">
+        <div class="text-xs uppercase text-gray-500">Completed swaps</div>
+        <div class="text-2xl font-semibold">20</div>
+      </div>
+      <div class="bg-white rounded border px-4 py-2">
+        <div class="text-xs uppercase text-gray-500">Universities</div>
+        <div class="text-2xl font-semibold">1</div>
+      </div>
+    </div>
+  </div>
+  <div class="bg-white p-6 rounded border">
+    <div class="flex items-center gap-4">
+      <div class="text-3xl">🎓</div>
+      <div>
+        <div class="text-2xl font-semibold">UK-focused</div>
+        <div class="text-gray-600">Works with university emails only (.ac.uk)</div>
+      </div>
+    </div>
+    <div class="mt-6">
+      <ul class="space-y-2 text-gray-700">
+        <li>Instant matching when both sides align</li>
+        <li>In-app messaging to agree and complete swaps</li>
+        <li>Mobile-friendly and fast</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="mt-12">
+  <h2 class="text-2xl font-semibold">How it works</h2>
+  <div class="mt-4 grid md:grid-cols-3 gap-6">
+    <div class="bg-white border rounded p-4">
+      <div class="font-medium">Create your request</div>
+      <div class="text-gray-700 mt-2">Select modules you’re giving away and those you want.</div>
+    </div>
+    <div class="bg-white border rounded p-4">
+      <div class="font-medium">Get matched</div>
+      <div class="text-gray-700 mt-2">We surface matches instantly when preferences align.</div>
+    </div>
+    <div class="bg-white border rounded p-4">
+      <div class="font-medium">Agree & complete</div>
+      <div class="text-gray-700 mt-2">Chat, confirm, and mark the swap completed.</div>
+    </div>
+  </div>
+</section>
+
+<section class="mt-12">
+  <h2 class="text-2xl font-semibold">Why ModSwap</h2>
+  <div class="mt-4 grid md:grid-cols-3 gap-6">
+    <div class="bg-white border rounded p-4">
+      <div class="font-medium">Legal & safe</div>
+      <div class="text-gray-700 mt-2">Designed to respect departmental rules and processes.</div>
+    </div>
+    <div class="bg-white border rounded p-4">
+      <div class="font-medium">Built for students</div>
+      <div class="text-gray-700 mt-2">Fast, simple UI tailored to academic modules.</div>
+    </div>
+    <div class="bg-white border rounded p-4">
+      <div class="font-medium">UK-first</div>
+      <div class="text-gray-700 mt-2">Focus on `.ac.uk` and university needs.</div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ModSwap</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.3"></script>
+  <script src="https://unpkg.com/alpinejs@3.x.x" defer></script>
+</head>
+<body class="min-h-screen bg-gray-50 flex flex-col">
+  <header class="bg-white border-b">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="/" class="text-2xl font-semibold tracking-tight">ModSwap</a>
+      <nav class="flex items-center gap-3">
+        <a href="/swaps" class="text-gray-700 hover:text-blue-700">Browse</a>
+        <a href="/swaps/create" class="text-gray-700 hover:text-blue-700">Create</a>
+        <a href="/chat" class="text-gray-700 hover:text-blue-700">Messages</a>
+        {% if current_user.is_authenticated %}
+          <form method="post" action="/auth/logout">
+            <button class="px-3 py-1.5 rounded bg-gray-900 text-white">Logout</button>
+          </form>
+        {% else %}
+          <a href="/auth/login" class="px-3 py-1.5 rounded bg-blue-600 text-white">Login</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <div class="max-w-6xl mx-auto px-4 pt-4">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="mb-4 rounded border border-blue-200 bg-blue-50 text-blue-900 px-4 py-2">{{ messages[0] }}</div>
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <main class="max-w-6xl mx-auto w-full px-4 py-8 flex-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="border-t bg-white">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-sm text-gray-600 flex items-center justify-between">
+      <div>© 2025 ModSwap — UK-focused module swaps</div>
+      <div class="flex gap-3">
+        <a href="/" class="hover:text-gray-900">Home</a>
+        <a href="/swaps" class="hover:text-gray-900">Browse</a>
+        <a href="/swaps/create" class="hover:text-gray-900">Create</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
