@@ -1,44 +1,38 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="max-w-4xl" x-data="{q: ''}">
-  <h2 class="text-2xl font-semibold mb-2">Create swap request</h2>
-  <p class="text-gray-700 mb-6">Select modules you are willing to give away and those you want. Use search to filter.</p>
-  <div class="mb-4 flex gap-2">
-    <input x-model="q" class="flex-1 border rounded px-3 py-2" placeholder="Search modules by code, name, department" />
-    <button type="button" class="px-4 py-2 rounded bg-gray-900 text-white">Search</button>
+<div class="max-w-3xl" x-data="{q: ''}">
+  <h2 class="text-2xl font-semibold">Create swap request</h2>
+  <p class="text-gray-600 mt-1">Keep it simple: choose what you’re giving and what you want.</p>
+  <div class="mt-4">
+    <input x-model="q" class="w-full border rounded px-3 py-2" placeholder="Search modules by code, name, or department" />
   </div>
-  <form method="post" class="grid md:grid-cols-2 gap-6">
-    <div class="bg-white border rounded p-4">
-      <div class="font-medium">Giving away</div>
-      <div class="text-sm text-gray-600 mb-3">Select modules you currently take and want to swap.</div>
-      <div class="space-y-2 max-h-80 overflow-auto">
+
+  <form method="post" class="mt-6 space-y-6">
+    <div class="bg-white border rounded">
+      <div class="px-4 py-3 border-b font-medium">Giving away</div>
+      <div class="p-4 space-y-2 max-h-80 overflow-auto">
         {% for m in modules %}
-        {% set dept = (m.department or '').lower() %}
-        {% set icon = '📘' %}
-        {% if 'finance' in dept or 'account' in dept %}{% set icon = '💼' %}{% elif 'law' in dept %}{% set icon = '⚖️' %}{% elif 'marketing' in dept %}{% set icon = '📈' %}{% elif 'computer' in dept or 'data' in dept or 'cyber' in dept or 'ai' in dept %}{% set icon = '💻' %}{% elif 'engineer' in dept or 'electrical' in dept or 'mechanical' in dept %}{% set icon = '🛠️' %}{% elif 'nurs' in dept or 'health' in dept or 'therapy' in dept or 'physio' in dept %}{% set icon = '🩺' %}{% elif 'art' in dept or 'design' in dept or 'fashion' in dept or 'graphic' in dept or 'interior' in dept or 'jewellery' in dept %}{% set icon = '🎨' %}{% elif 'music' in dept %}{% set icon = '🎵' %}{% elif 'photo' in dept %}{% set icon = '📷' %}{% elif 'theatre' in dept or 'performance' in dept %}{% set icon = '🎭' %}{% endif %}
-        <label class="flex items-center gap-2" x-show="q === '' || '{{ m.code }} {{ m.name }} {{ m.department }}'.toLowerCase().includes(q.toLowerCase())">
+        <label class="flex items-center gap-3" x-show="q === '' || '{{ m.code }} {{ m.name }} {{ m.department }}'.toLowerCase().includes(q.toLowerCase())">
           <input type="checkbox" name="give" value="{{ m.id }}">
-          <span class="text-gray-800">{{ icon }} <span class="font-medium">{{ m.code }}</span> — {{ m.name }}</span>
+          <span class="text-gray-900 truncate"><span class="font-medium">{{ m.code }}</span> — {{ m.name }}</span>
         </label>
         {% endfor %}
       </div>
     </div>
-    <div class="bg-white border rounded p-4">
-      <div class="font-medium">Want</div>
-      <div class="text-sm text-gray-600 mb-3">Select modules you desire to take.</div>
-      <div class="space-y-2 max-h-80 overflow-auto">
+
+    <div class="bg-white border rounded">
+      <div class="px-4 py-3 border-b font-medium">Want</div>
+      <div class="p-4 space-y-2 max-h-80 overflow-auto">
         {% for m in modules %}
-        {% set dept = (m.department or '').lower() %}
-        {% set icon = '📘' %}
-        {% if 'finance' in dept or 'account' in dept %}{% set icon = '💼' %}{% elif 'law' in dept %}{% set icon = '⚖️' %}{% elif 'marketing' in dept %}{% set icon = '📈' %}{% elif 'computer' in dept or 'data' in dept or 'cyber' in dept or 'ai' in dept %}{% set icon = '💻' %}{% elif 'engineer' in dept or 'electrical' in dept or 'mechanical' in dept %}{% set icon = '🛠️' %}{% elif 'nurs' in dept or 'health' in dept or 'therapy' in dept or 'physio' in dept %}{% set icon = '🩺' %}{% elif 'art' in dept or 'design' in dept or 'fashion' in dept or 'graphic' in dept or 'interior' in dept or 'jewellery' in dept %}{% set icon = '🎨' %}{% elif 'music' in dept %}{% set icon = '🎵' %}{% elif 'photo' in dept %}{% set icon = '📷' %}{% elif 'theatre' in dept or 'performance' in dept %}{% set icon = '🎭' %}{% endif %}
-        <label class="flex items-center gap-2" x-show="q === '' || '{{ m.code }} {{ m.name }} {{ m.department }}'.toLowerCase().includes(q.toLowerCase())">
+        <label class="flex items-center gap-3" x-show="q === '' || '{{ m.code }} {{ m.name }} {{ m.department }}'.toLowerCase().includes(q.toLowerCase())">
           <input type="checkbox" name="want" value="{{ m.id }}">
-          <span class="text-gray-800">{{ icon }} <span class="font-medium">{{ m.code }}</span> — {{ m.name }}</span>
+          <span class="text-gray-900 truncate"><span class="font-medium">{{ m.code }}</span> — {{ m.name }}</span>
         </label>
         {% endfor %}
       </div>
     </div>
-    <div class="md:col-span-2 flex justify-end">
+
+    <div class="flex justify-end">
       <button class="px-5 py-2.5 bg-blue-600 text-white rounded">Create request</button>
     </div>
   </form>

@@ -6,6 +6,7 @@ from .main.routes import main_bp
 from .auth.routes import auth_bp
 from .swaps.routes import swaps_bp
 from .chat.routes import chat_bp
+from .admin.routes import admin_bp
 
 
 def create_app():
@@ -26,4 +27,5 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(swaps_bp, url_prefix="/swaps")
     app.register_blueprint(chat_bp, url_prefix="/chat")
+    app.register_blueprint(admin_bp, url_prefix="/admin")
     return app

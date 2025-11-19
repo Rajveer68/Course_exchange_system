@@ -16,6 +16,9 @@
         <a href="/swaps" class="text-gray-700 hover:text-blue-700">Browse</a>
         <a href="/swaps/create" class="text-gray-700 hover:text-blue-700">Create</a>
         <a href="/chat" class="text-gray-700 hover:text-blue-700">Messages</a>
+        {% if session.get('role') == 'teacher' %}
+          <a href="/admin/swaps" class="text-gray-700 hover:text-blue-700">Admin</a>
+        {% endif %}
         {% if current_user.is_authenticated %}
           <form method="post" action="/auth/logout">
             <button class="px-3 py-1.5 rounded bg-gray-900 text-white">Logout</button>
