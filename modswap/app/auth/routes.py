@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_user, logout_user, current_user
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 from flask import current_app
-from ..extensions import db
+from ..extensions import db, bcrypt
 from ..models import User
 
 
@@ -30,6 +30,18 @@ def login():
 def send_magic_link():
     email = request.form.get("email", "").strip().lower()
     role = request.form.get("role", "student")
+    if role == "teacher":
+        password = request.form.get("password", "")
+        user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one_or_none()
+        if not user or getattr(user, "role", "student") != "teacher" or not user.password_hash:
+            flash("Admin account not found")
+            return redirect(url_for("auth.login"))
+        if not bcrypt.check_password_hash(user.password_hash, password):
+            flash("Invalid admin credentials")
+            return redirect(url_for("auth.login"))
+        login_user(user)
+        session["role"] = "teacher"
+        return redirect(url_for("admin.swaps"))
     if not email_is_uni(email):
         flash("Use your university email ending with .ac.uk")
         return redirect(url_for("auth.login"))

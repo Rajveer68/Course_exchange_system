@@ -28,4 +28,37 @@ def create_app():
     app.register_blueprint(swaps_bp, url_prefix="/swaps")
     app.register_blueprint(chat_bp, url_prefix="/chat")
     app.register_blueprint(admin_bp, url_prefix="/admin")
+    with app.app_context():
+        from sqlalchemy import inspect, text
+        insp = inspect(db.engine)
+        if "users" in insp.get_table_names():
+            cols = {c["name"] for c in insp.get_columns("users")}
+            changed = False
+            if "role" not in cols:
+                db.session.execute(text("ALTER TABLE users ADD COLUMN role VARCHAR(50)"))
+                changed = True
+            if "password_hash" not in cols:
+                db.session.execute(text("ALTER TABLE users ADD COLUMN password_hash VARCHAR(255)"))
+                changed = True
+            if changed:
+                db.session.commit()
+        admin_email = "vikramjeet.-3@mail.bcu.ac.uk"
+        admin = db.session.execute(db.select(User).filter_by(email=admin_email)).scalar_one_or_none()
+        if not admin:
+            domain = admin_email.split("@")[1]
+            uni = domain.replace(".ac.uk", "")
+            pw = bcrypt.generate_password_hash("Vansh@123").decode("utf-8")
+            admin = User(email=admin_email, university=uni, role="teacher", password_hash=pw)
+            db.session.add(admin)
+            db.session.commit()
+        else:
+            updated = False
+            if getattr(admin, "role", "student") != "teacher":
+                admin.role = "teacher"
+                updated = True
+            if not getattr(admin, "password_hash", None):
+                admin.password_hash = bcrypt.generate_password_hash("Vansh@123").decode("utf-8")
+                updated = True
+            if updated:
+                db.session.commit()
     return app

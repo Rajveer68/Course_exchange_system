@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from flask_login import UserMixin
 from sqlalchemy import Table, Column, Integer, String, DateTime, ForeignKey, Boolean, Text
 from sqlalchemy.orm import relationship, Mapped, mapped_column
@@ -36,6 +37,8 @@ class User(db.Model, UserMixin):
     university: Mapped[str] = mapped_column(String(255), nullable=True)
     degree: Mapped[str] = mapped_column(String(255), nullable=True)
     year: Mapped[int] = mapped_column(Integer, nullable=True)
+    role: Mapped[str] = mapped_column(String(50), default="student")
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     modules = relationship("Module", secondary=user_modules, back_populates="students")
 
