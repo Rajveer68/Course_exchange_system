@@ -13,9 +13,14 @@
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <a href="/" class="text-2xl font-semibold tracking-tight">ModSwap</a>
       <nav class="flex items-center gap-3">
-        <a href="/swaps" class="text-gray-700 hover:text-blue-700">Browse</a>
-        <a href="/swaps/create" class="text-gray-700 hover:text-blue-700">Create</a>
+        {% if session.get('role') != 'teacher' %}
+          <a href="/swaps" class="text-gray-700 hover:text-blue-700">Browse</a>
+          <a href="/swaps/create" class="text-gray-700 hover:text-blue-700">Create</a>
+        {% endif %}
         <a href="/chat" class="text-gray-700 hover:text-blue-700">Messages</a>
+        {% if current_user.is_authenticated %}
+          <a href="/profile" class="text-gray-700 hover:text-blue-700">Profile</a>
+        {% endif %}
         {% if session.get('role') == 'teacher' %}
           <a href="/admin/swaps" class="text-gray-700 hover:text-blue-700">Admin</a>
         {% endif %}
@@ -52,5 +57,6 @@
       </div>
     </div>
   </footer>
+  
 </body>
 </html>

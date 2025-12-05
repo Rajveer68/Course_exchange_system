@@ -1,34 +1,97 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="max-w-3xl" x-data="{q: ''}">
+<div class="max-w-3xl" x-data="{
+  q: '',
+  giving: new Set(),
+  wanting: new Set(),
+  counts(){ return {give: this.giving.size, want: this.wanting.size} },
+  toggle(set, id){ if(set.has(id)) set.delete(id); else set.add(id); },
+  conflict(id){ return this.giving.has(id) && this.wanting.has(id) }
+}">
   <h2 class="text-2xl font-semibold">Create swap request</h2>
-  <p class="text-gray-600 mt-1">Keep it simple: choose what you’re giving and what you want.</p>
+  <p class="text-gray-600 mt-1">Choose what you’re giving and what you want. Keep it focused.</p>
   <div class="mt-4">
     <input x-model="q" class="w-full border rounded px-3 py-2" placeholder="Search modules by code, name, or department" />
   </div>
 
-  <form method="post" class="mt-6 space-y-6">
+  <form method="post" class="mt-6 space-y-6" hx-post="/swaps/suggest" hx-trigger="change delay:300ms" hx-target="#suggestions">
     <div class="bg-white border rounded">
-      <div class="px-4 py-3 border-b font-medium">Giving away</div>
+      <div class="px-4 py-3 border-b font-medium">Giving away <span class="text-xs text-gray-500" x-text="counts().give + ' selected'"></span></div>
       <div class="p-4 space-y-2 max-h-80 overflow-auto">
         {% for m in modules %}
-        <label class="flex items-center gap-3" x-show="q === '' || '{{ m.code }} {{ m.name }} {{ m.department }}'.toLowerCase().includes(q.toLowerCase())">
-          <input type="checkbox" name="give" value="{{ m.id }}">
-          <span class="text-gray-900 truncate"><span class="font-medium">{{ m.code }}</span> — {{ m.name }}</span>
+        <label class="flex items-center gap-3"
+               x-show="q === '' || '{{ m.code }} {{ m.name }} {{ m.department }} {{ m.year }}'.toLowerCase().includes(q.toLowerCase())">
+          <input type="checkbox" name="give" value="{{ m.id }}" @change="toggle(giving, {{ m.id }})">
+          <span class="text-gray-900 truncate"><span class="font-medium">{{ m.code }}</span> — {{ m.name }} <span class="text-xs text-gray-500">{{ m.department }} {{ m.year }}</span></span>
         </label>
         {% endfor %}
       </div>
     </div>
 
     <div class="bg-white border rounded">
-      <div class="px-4 py-3 border-b font-medium">Want</div>
+      <div class="px-4 py-3 border-b font-medium">Want <span class="text-xs text-gray-500" x-text="counts().want + ' selected'"></span></div>
       <div class="p-4 space-y-2 max-h-80 overflow-auto">
         {% for m in modules %}
-        <label class="flex items-center gap-3" x-show="q === '' || '{{ m.code }} {{ m.name }} {{ m.department }}'.toLowerCase().includes(q.toLowerCase())">
-          <input type="checkbox" name="want" value="{{ m.id }}">
-          <span class="text-gray-900 truncate"><span class="font-medium">{{ m.code }}</span> — {{ m.name }}</span>
+        <label class="flex items-center gap-3"
+               x-show="q === '' || '{{ m.code }} {{ m.name }} {{ m.department }} {{ m.year }}'.toLowerCase().includes(q.toLowerCase())">
+          <input type="checkbox" name="want" value="{{ m.id }}" :disabled="giving.has({{ m.id }})" @change="toggle(wanting, {{ m.id }})">
+          <span class="text-gray-900 truncate"><span class="font-medium">{{ m.code }}</span> — {{ m.name }} <span class="text-xs text-gray-500">{{ m.department }} {{ m.year }}</span></span>
         </label>
         {% endfor %}
+      </div>
+    </div>
+
+    <div class="bg-white border rounded p-4 grid md:grid-cols-2 gap-3">
+      <div>
+        <div class="text-sm text-gray-600">Notes</div>
+        <textarea name="notes" rows="2" class="w-full border rounded px-3 py-2" placeholder="Clashes with lab on Wednesdays"></textarea>
+      </div>
+      <div>
+        <div class="text-sm text-gray-600">Priority</div>
+        <select name="priority" class="w-full border rounded px-3 py-2">
+          <option value="">None</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+      </div>
+      <div>
+        <div class="text-sm text-gray-600">Expires on</div>
+        <input type="date" name="expires_on" class="w-full border rounded px-3 py-2">
+      </div>
+      <div>
+        <div class="text-sm text-gray-600">Preferred timeslots</div>
+        <input name="timeslots" class="w-full border rounded px-3 py-2" placeholder="morning, Tue/Thu">
+      </div>
+      <div>
+        <div class="text-sm text-gray-600">Campus preference</div>
+        <input name="campus" class="w-full border rounded px-3 py-2" placeholder="Main campus">
+      </div>
+      <div>
+        <div class="text-sm text-gray-600">Module group preference</div>
+        <input name="module_group_pref" class="w-full border rounded px-3 py-2" placeholder="Any CS Level 5 elective">
+      </div>
+      <div class="md:col-span-2 flex items-center gap-4">
+        <label class="flex items-center gap-2"><input type="checkbox" name="alerts_email"><span>Email alerts</span></label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="auto_create_chat"><span>Auto-create chat on strong match</span></label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="visibility" value="restricted"><span>Restricted visibility</span></label>
+      </div>
+    </div>
+
+    <div id="suggestions" class="bg-white border rounded p-4"></div>
+
+    <div x-data="{open:false}" class="bg-white border rounded p-4">
+      <div class="flex items-center justify-between">
+        <div class="font-medium">Preview</div>
+        <button type="button" class="px-3 py-1.5 rounded border" @click="open = true">Open preview</button>
+      </div>
+      <div x-show="open" class="mt-3 border rounded p-3">
+        <div class="text-sm text-gray-600">Giving</div>
+        <div class="mt-1 text-gray-900">Selected modules shown above</div>
+        <div class="mt-3 text-sm text-gray-600">Wanting</div>
+        <div class="mt-1 text-gray-900">Selected modules shown above</div>
+        <div class="mt-3 text-sm text-gray-600">Notes & Preferences</div>
+        <div class="text-gray-900">Review your selections and submit when ready.</div>
       </div>
     </div>
 

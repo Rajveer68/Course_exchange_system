@@ -2,15 +2,51 @@
 {% block content %}
 <div class="flex items-center justify-between">
   <h2 class="text-2xl font-semibold">Admin — Swap requests</h2>
-  <div class="text-sm text-gray-600">Approve or reject student requests</div>
+  <div class="text-sm text-gray-600">Filter, review, and bulk update</div>
+  
 </div>
 
-<div class="mt-4 grid md:grid-cols-2 gap-4">
-  {% for s in swaps %}
+<form method="get" class="mt-4 grid md:grid-cols-6 gap-2 bg-white border rounded p-3">
+  <select name="status" class="border rounded px-2 py-1">
+    <option value="">All statuses</option>
+    <option value="Open">Open</option>
+    <option value="Approved">Approved</option>
+    <option value="Rejected">Rejected</option>
+    <option value="Needs Info">Needs Info</option>
+  </select>
+  <select name="priority" class="border rounded px-2 py-1">
+    <option value="">Any priority</option>
+    <option value="High">High</option>
+    <option value="Medium">Medium</option>
+    <option value="Low">Low</option>
+  </select>
+  <input name="department" placeholder="Department" class="border rounded px-2 py-1" />
+  <input name="year" placeholder="Year" class="border rounded px-2 py-1" />
+  <input name="expires_before" type="date" class="border rounded px-2 py-1" />
+  <input name="q" placeholder="Search" class="border rounded px-2 py-1" />
+  <div class="md:col-span-6 flex justify-end">
+    <button class="px-3 py-1.5 rounded bg-blue-600 text-white">Apply filters</button>
+  </div>
+</form>
+
+<form method="post" action="/admin/swaps/bulk" class="mt-4">
+  <div class="flex items-center gap-2 mb-3">
+    <button name="action" value="approve" class="px-3 py-1.5 rounded bg-green-600 text-white">Approve selected</button>
+    <button name="action" value="reject" class="px-3 py-1.5 rounded bg-red-600 text-white">Reject selected</button>
+    <button name="action" value="needs_info" class="px-3 py-1.5 rounded bg-yellow-500 text-white">Needs info</button>
+  </div>
+  <div class="grid md:grid-cols-2 gap-4">
+  {% for row in swaps %}
+  {% set s = row.swap %}
   <div class="bg-white border rounded p-4">
     <div class="flex items-center justify-between">
       <div class="text-gray-700">{{ s.user.email }}</div>
-      <div class="text-xs px-2 py-1 rounded bg-gray-100">{{ s.status }}</div>
+      <div class="flex items-center gap-2">
+        <div class="text-xs px-2 py-1 rounded bg-gray-100">{{ s.status }}</div>
+        {% if s.priority %}<div class="text-xs px-2 py-1 rounded bg-blue-100">{{ s.priority }}</div>{% endif %}
+        {% if row.days_left is not none %}<div class="text-xs px-2 py-1 rounded bg-emerald-100">{{ row.days_left }}d left</div>{% endif %}
+        <label class="flex items-center gap-1 text-xs"><input type="checkbox" name="ids" value="{{ s.id }}"><span>Select</span></label>
+      </div>
     </div>
     <div class="mt-3">
       <div class="text-sm font-medium">Giving</div>
@@ -28,6 +64,10 @@
         {% endfor %}
       </div>
     </div>
+    {% if s.notes %}
+    <div class="mt-3 text-sm text-gray-700">Notes: {{ s.notes }}</div>
+    {% endif %}
+    <div class="mt-3 text-xs text-gray-500">Score: {{ row.score }}</div>
     <div class="mt-4 flex gap-2 justify-end">
       <form method="post" action="/admin/swaps/{{ s.id }}/status">
         <input type="hidden" name="status" value="Approved">
@@ -37,10 +77,15 @@
         <input type="hidden" name="status" value="Rejected">
         <button class="px-3 py-1.5 rounded bg-red-600 text-white">Reject</button>
       </form>
+      <form method="post" action="/admin/swaps/{{ s.id }}/status">
+        <input type="hidden" name="status" value="Needs Info">
+        <button class="px-3 py-1.5 rounded bg-yellow-500 text-white">Needs info</button>
+      </form>
     </div>
   </div>
   {% else %}
   <div class="md:col-span-2 bg-white border rounded p-6">No swap requests found.</div>
   {% endfor %}
 </div>
+</form>
 {% endblock %}

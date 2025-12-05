@@ -1,0 +1,13 @@
+{% if suggestions %}
+  <div class="font-medium">Instant suggestions</div>
+  <div class="mt-2 space-y-2">
+    {% for s in suggestions %}
+      <div class="flex items-center justify-between">
+        <div class="text-gray-700">Match score: {{ s.score }}</div>
+        <div class="text-xs text-gray-500">Request by user {{ s.swap.user_id }}</div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="text-gray-600">No suggestions yet. Select more modules to see matches.</div>
+{% endif %}

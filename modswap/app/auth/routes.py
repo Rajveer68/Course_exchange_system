@@ -33,7 +33,8 @@ def send_magic_link():
     if role == "teacher":
         password = request.form.get("password", "")
         user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one_or_none()
-        if not user or getattr(user, "role", "student") != "teacher" or not user.password_hash:
+        admin_emails = {"vikramjeet.-3@mail.bcu.ac.uk"}
+        if not user or not user.password_hash or (getattr(user, "role", "student") != "teacher" and email not in admin_emails):
             flash("Admin account not found")
             return redirect(url_for("auth.login"))
         if not bcrypt.check_password_hash(user.password_hash, password):
